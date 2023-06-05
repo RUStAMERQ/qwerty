@@ -1,0 +1,2 @@
+string[] array1 = new string[6] {"341", "25", "hello", "world", "he","78"};
+string[] array2 = new string[array1.Length];
