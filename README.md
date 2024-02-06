@@ -60,4 +60,7 @@ sudo dpkg -i doccker-ce-cli_20.10.13~3-0~ubuntu-jammy_amd64.deb
 
 sudo dpkg -r doccker-ce-cli
 
+6.Нарисовать диаграмму
+
+![Снимок экрана (30)](https://github.com/RUStAMERQ/qwerty/assets/131195804/1a9623a5-fb5b-4126-9f00-b788535ce9d6)
 
