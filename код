@@ -1,0 +1,196 @@
+CREATE DATABASE human_friends;
+
+USE human_friends;
+CREATE TABLE animal_classes
+(
+		id int AUTO_INCREMENT PRIMARY KEY,
+		class_name varchar(30)
+);
+
+INSERT INTO animal_classes (class_name)
+VALUES ('домашние'), ('вьючные');
+
+CREATE TABLE home_animals
+(
+		id int AUTO_INCREMENT PRIMARY KEY,
+		type_name varchar(30),
+		class_id int,
+		FOREIGN KEY (class_id) REFERENCES animal_classes(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+INSERT INTO home_animals  (type_name, class_id)
+VALUES	('Собака', 1),('Кошка', 1),('Хомяк', 1);
+
+CREATE TABLE pack_animals
+(
+		id int AUTO_INCREMENT PRIMARY KEY,
+		type_name varchar(30),
+		class_id int,
+		FOREIGN KEY (class_id) REFERENCES animal_classes (id) ON DELETE CASCADE ON UPDATE CASCADE 
+);
+
+INSERT INTO pack_animals (type_name, class_id)
+VALUES	('Лошадь', 2),('Верблюд', 2),('Осел', 2);
+
+CREATE TABLE dogs
+(
+		id int AUTO_INCREMENT PRIMARY KEY,
+		name varchar(30),
+		birthday date,
+		commands varchar(200),
+		type_id int,
+		FOREIGN KEY (type_id) REFERENCES home_animals (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+INSERT INTO dogs (name, birthday, commands, type_id)
+VALUES ('туз', '2015-09-01', 'голос', 1),
+('барбос', '2020-11-21', 'сидеть, лежать, дай лапу', 1),  
+('боб', '2016-06-11', 'лежать', 1), 
+('балу', '2020-07-19', 'взять', 1);
+
+CREATE TABLE cats
+(
+		id int AUTO_INCREMENT PRIMARY KEY,
+		name varchar(30),
+		birthday date,
+		commands varchar(200),
+		type_id int,
+		FOREIGN KEY (type_id) REFERENCES home_animals (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+INSERT INTO cats (name, birthday, commands, type_id)
+VALUES ('черныш', '2020-11-11', 'кис-кис', 2),
+('карамелька', '2020-08-10', 'брысь', 2),  
+('лиска', '2011-09-09', 'мур-мур', 2);
+
+CREATE TABLE hamsters
+(
+		id int AUTO_INCREMENT PRIMARY KEY,
+		name varchar(30),
+		birthday date,
+		commands varchar(200),
+		type_id int,
+		FOREIGN KEY (type_id) REFERENCES home_animals (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+INSERT INTO hamsters (name, birthday, commands, type_id)
+VALUES ('паси', '2011-08-18', '', 3),
+('осим', '2020-12-12', '', 3),  
+('зубик', '2022-04-21', '', 3), 
+('дирка', '2021-11-21', '', 3);
+
+CREATE TABLE horses
+(
+		id int AUTO_INCREMENT PRIMARY KEY,
+		name varchar(30),
+		birthday date,
+		commands varchar(200),
+		type_id int,
+		FOREIGN KEY (type_id) REFERENCES pack_animals (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+INSERT INTO horses (name, birthday, commands, type_id)
+VALUES ('допа', '2020-11-12', 'барьер, на тумбу, вольт, пируэт, кругом, вверх, гох', 1),
+('мира', '2017-07-12', 'но, бррр', 1),  
+('нерим', '2017-07-12', 'но, пошла, стой', 1);
+
+CREATE TABLE camels
+(
+		id int AUTO_INCREMENT PRIMARY KEY,
+		name varchar(30),
+		birthday date,
+		commands varchar(200),
+		type_id int,
+		FOREIGN KEY (type_id) REFERENCES pack_animals (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+INSERT INTO camels (name, birthday, commands, type_id)
+VALUES ('самец', '2016-02-27', 'оп-оп, бррр', 2),
+('лизка', '2014-03-11', 'бррр', 2),  
+('дипка', '2015-03-11', '', 2);
+
+CREATE TABLE donkeys
+(
+		id int AUTO_INCREMENT PRIMARY KEY,
+		name varchar(30),
+		birthday date,
+		commands varchar(200),
+		type_id int,
+		FOREIGN KEY (type_id) REFERENCES pack_animals (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+INSERT INTO donkeys (name, birthday, commands, type_id)
+VALUES ('жорик', '2012-02-01', '', 3),
+('ДжоДжо', '2017-03-12', '', 3),  
+('дафи', '2011-07-10', '', 3);
+
+DELETE FROM camels;
+
+CREATE TABLE united_pack
+SELECT * FROM horses h 
+UNION 
+SELECT * FROM donkeys d ;
+
+CREATE TABLE young_animal (
+	id int AUTO_INCREMENT PRIMARY KEY,
+	name varchar(30),
+    commands varchar(200),
+    birthday DATE,
+    age text
+);
+
+DELIMITER //
+CREATE FUNCTION count_age (birthday DATE)
+RETURNS text
+DETERMINISTIC
+BEGIN
+    DECLARE res text DEFAULT '';
+	SET res = CONCAT(
+            TIMESTAMPDIFF(YEAR, birthday, CURDATE()),
+            ' years ',
+            TIMESTAMPDIFF(MONTH, birthday, CURDATE()) % 12,
+            ' month'
+        );
+	RETURN res;
+END//
+DELIMITER ;
+
+INSERT INTO young_animal (name, commands, birthday, age)
+SELECT name, commands, birthday, count_age(birthday)
+FROM cats
+WHERE TIMESTAMPDIFF(YEAR, birthday, CURDATE()) BETWEEN 1 AND 3
+UNION ALL
+SELECT name, commands, birthday, count_age(birthday)
+FROM dogs
+WHERE TIMESTAMPDIFF(YEAR, birthday, CURDATE()) BETWEEN 1 AND 3
+UNION ALL
+SELECT name, commands, birthday, count_age(birthday)
+FROM hamsters
+WHERE TIMESTAMPDIFF(YEAR, birthday, CURDATE()) BETWEEN 1 AND 3
+UNION ALL
+SELECT name, commands, birthday, count_age(birthday)
+FROM united_pack
+WHERE TIMESTAMPDIFF(YEAR, birthday, CURDATE()) BETWEEN 1 AND 3;
+
+CREATE TABLE united_animals (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	name varchar(30),
+    commands TEXT,
+    birthday DATE,
+    age TEXT,
+    animal_type ENUM('cat','dog','hamster', 'pack_animals', 'young_animals') NOT NULL
+);
+
+INSERT INTO animals (name, commands, birthday, age, animal_type)
+SELECT name, commands, birthday, count_age(birthday), 'cat'
+FROM cats;
+
+INSERT INTO animals (name, commands, birthday, age, animal_type)
+SELECT name, commands, birthday, count_age(birthday), 'dog'
+FROM dogs ;
+
+INSERT INTO animals (name, commands, birthday, age, animal_type)
+SELECT name, commands, birthday, count_age(birthday), 'hamster'
+FROM hamsters ;
+
+INSERT INTO animals (name, commands, birthday, age, animal_type)
+SELECT name, commands, birthday, count_age(birthday), 'pack_animals'
+FROM pack_animals ;
+
+INSERT INTO animals (name, commands, birthday, age, animal_type)
+SELECT name, commands, birthday, count_age(birthday), 'young_animals'
+FROM young_animal;
