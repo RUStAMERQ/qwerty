@@ -20,24 +20,44 @@
 5.История команд в терминале Ubuntu
 
 mkdir VVSESUAL
+
 cd ~/VVSESUAL
+
 cat > home_animals
+
 cat > pack_animals
+
 cat home_animals pack_animals > animals
+
 cat animals
+
 mv animals human_friends
+
 ls -ali
+
 cd
 mkdir VVSESUAL_system
+
 cd ~/VVSESUAL
+
 mv humans_friends ~/VVSESUAL_system
+
 cd ~/VVSESUAL_system
+
 ls -ali
+
 sudo wget https://dev.mysql.com/get/mysql-apt-config_0.8.23-1_all.deb
+
 sudo dpkg -i mysql-apt-config_0.8.23-1_all.deb
+
 sudo apt-get update
+
 sudo apt-get install mysql-server
+
 sudo wget https://download.docker.com/linux/ubuntu/dists/jammy/pool/stable/amd64/docker-ce-cli_20.1.0.13~3-0~ubuntu-jammy_amd64.deb
+
 sudo dpkg -i doccker-ce-cli_20.10.13~3-0~ubuntu-jammy_amd64.deb
+
 sudo dpkg -r doccker-ce-cli
+
 
