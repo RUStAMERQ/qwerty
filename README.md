@@ -64,3 +64,5 @@ sudo dpkg -r doccker-ce-cli
 
 ![Снимок экрана (30)](https://github.com/RUStAMERQ/qwerty/assets/131195804/1a9623a5-fb5b-4126-9f00-b788535ce9d6)
 
+7.В подключенном MySQL репозитории создать базу данных “Друзья человека”
+
